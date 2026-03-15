@@ -52,6 +52,8 @@ def get_round_colours():
     median = (int_scores[1] + int_scores[2]) / 2
     median = round_ans(median)
 
+    return round_colours, median
+
 
 def round_ans(val):
     """
@@ -91,6 +93,22 @@ class Play:
     """ Interface for playing the colour quest game """
 
     def __init__(self, how_many):
+
+        # Integers / String Variables
+        self.target_score = IntVar()
+
+        # rounds played - start with zero
+        self.rounds_played = IntVar()
+        self.rounds_played.set(0)
+
+        self.rounds_wanted = IntVar()
+        self.rounds_wanted.set(how_many)
+
+        # colour lists and score list
+        self.round_colour_list = []
+        self.all_scores_list = []
+        self.all_medians_list = []
+
         self.play_box = Toplevel()
 
         self.game_frame = Frame(self.play_box)
@@ -112,7 +130,7 @@ class Play:
             self.make_label = Label(self.game_frame, text=item[0], font=item[1], bg=item[2], wraplength=300, justify="left")
             self.make_label.grid(row=item[3], pady=10, padx=10)
 
-            play_labels_ref.append(item)
+            play_labels_ref.append(self.make_label)
 
         # retrieve labels so they can be configured later
         self.heading_label = play_labels_ref[0]
@@ -148,6 +166,34 @@ class Play:
             make_control_button.grid(row=item[5], column=item[6], padx=5, pady=5)
 
             control_ref_list.append(make_control_button)
+
+        # Once interface has been created, invoke new round function for first round
+        self.new_round()
+
+    def new_round(self):
+        """
+        Chooses four colours, works out median for score to beat. Configures buttons
+        with chosen colours.
+        """
+
+        # retrieve number of rounds played, add one to it and configure heading
+        rounds_played = self.rounds_played.get()
+        rounds_played += 1
+        self.rounds_played.set(rounds_played)
+
+        rounds_wanted =self.rounds_wanted.get()
+
+        # get round colours and median score
+        self.round_colour_list, median = get_round_colours()
+
+        # set target score as median (for later comparison)
+        self.target_score.set(median)
+
+        # update heading and score to beat labels. "Hide" results label
+        self.heading_label.config(text=f"Round {rounds_played} of {rounds_wanted}")
+        self.target_label.config(text=f"Target Score {median}", font=("Arial", 14, "bold"))
+        self.results_label.config(text=f"{'=' * 7}", bg="#F0F0F0")
+
 
 
     def close_play(self):

@@ -141,10 +141,15 @@ class Play:
         self.colour_frame = Frame(self.game_frame)
         self.colour_frame.grid(row=3)
 
+        self.colour_button_ref = []
+        self.button_colours_list = []
+
         # create 4 buttons in a 2x2 grid
         for item in range(0, 4):
             self.colour_button = Button(self.colour_frame, font=body_font, text="Colour Name", width=15)
             self.colour_button.grid(row=item // 2, column=item % 2, padx=5, pady=5)
+
+            self.colour_button_ref.append(self.colour_button)
 
         # frame to hold hints and stats buttons
         self.hints_stats_frame = Frame(self.game_frame)
@@ -185,6 +190,7 @@ class Play:
 
         # get round colours and median score
         self.round_colour_list, median = get_round_colours()
+        median = int(median)
 
         # set target score as median (for later comparison)
         self.target_score.set(median)
@@ -193,6 +199,12 @@ class Play:
         self.heading_label.config(text=f"Round {rounds_played} of {rounds_wanted}")
         self.target_label.config(text=f"Target Score {median}", font=("Arial", 14, "bold"))
         self.results_label.config(text=f"{'=' * 7}", bg="#F0F0F0")
+
+
+        # configure buttons using foreground and background colours from list
+        # enable colour buttons (disabled at the end of the last round)
+        for count, item in enumerate(self.colour_button_ref):
+            item.config(fg=self.round_colour_list[count][2], bg=self.round_colour_list[count][0], text=self.round_colour_list[count][0], state=NORMAL)
 
 
 

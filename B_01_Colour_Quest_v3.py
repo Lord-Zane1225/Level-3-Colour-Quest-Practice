@@ -484,11 +484,11 @@ class DisplayHints:
         self.hint_heading_label.grid(row=0)
 
         # hint text
-        hint_text = (" -- PLACEHOLDER -- To use the program, simply enter the temperature you wish to convert and then choose to convert to "
-                     "either degrees Celsius (centigrade) or Fahrenheit. \n\n Note that -273 degrees C (or -459 F) is "
-                     "absolute zero (the coldest possible temperature). If you try to convert to a temperature which is "
-                     "less than -273 degrees C, you will get an error message. \n\nTo see your calculation history and "
-                     "export it into a text file, please click the 'History / Export' button. ")
+        hint_text = ("The score for each colour relates to it's hexadecimal code.\n"
+                     "Remember, the hex code for white is #FFFFFF - which is the best possible score.\n"
+                     "The hex code for black is #000000 - which is the worst possible score.\n"
+                     "The first colour in the code is red, so if you had to choose between red (#FF000), green (#00FF00) and blue (#0000FF), then red would be the best choice.\n"
+                     "Good luck!")
 
         self.hint_text_label = Label(self.hint_frame,
                                      text=hint_text, wraplength=350, justify="left")

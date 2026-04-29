@@ -181,6 +181,9 @@ class Play:
         self.game_frame = Frame(self.play_box)
         self.game_frame.grid(padx=10, pady=10)
 
+        # if users press the 'x' on the game window, end the entire game
+        self.play_box.protocol('WM_DELETE_WINDOW', root.destroy)
+
         # body font for most labels
         body_font = ("Arial", 12)
 
@@ -290,9 +293,13 @@ class Play:
 
     def to_hints(self):
         """
-        Displays hints for playing game
+        Displays hints for playing game. Prevents users from accessing dialogues
+        that could lead to the program crashing.
         """
-        DisplayHints(self)
+        # check that we have played at least one round so that
+        # stats button is not enabled in error.
+        rounds_played = self.rounds_played.get()
+        DisplayHints(self, rounds_played)
 
 
     def round_results(self, user_choice):
@@ -381,6 +388,11 @@ class Play:
 class Stats:
 
     def __init__(self, partner, all_stats_info):
+
+        # disable buttons to prevent program crashing
+        partner.hints_button.config(state=DISABLED)
+        partner.end_game_button.config(state=DISABLED)
+        partner.stats_button.config(state=DISABLED)
 
         # extract information from master list
         rounds_won = all_stats_info[0]
@@ -471,21 +483,29 @@ class Stats:
     def close_stats(self, partner):
 
         """Closes stats dialogue box and enables stats button."""
-        # make stats button normal
+        # make buttons normal
+        partner.hints_button.config(state=NORMAL)
+        partner.end_game_button.config(state=NORMAL)
         partner.stats_button.config(state=NORMAL)
+
         self.stats_box.destroy()
 
 
 class DisplayHints:
 
-    def __init__(self, partner):
+    def __init__(self, partner, rounds_played):
+        # retrieve rounds played
+        self.rounds_played = rounds_played
 
         # setup dialogue box
         background = "#FFE6CC"
         self.hint_box = Toplevel()
 
-        # disable hint button
+        # disable hint, stat and end game buttons to prevent users
+        # from leaving a dialogue open and going back to rounds dialogue.
         partner.hints_button.config(state=DISABLED)
+        partner.stats_button.config(state=DISABLED)
+        partner.end_game_button.config(state=DISABLED)
 
         # if users press the cross at the top, closes help and enables help button.
         self.hint_box.protocol('WM_DELETE_WINDOW', partial(self.close_hints, partner))
@@ -523,8 +543,14 @@ class DisplayHints:
     def close_hints(self, partner):
 
         """Closes help dialogue box and enables help button."""
-        # make hint button normal
+        # make buttons normal
         partner.hints_button.config(state=NORMAL)
+        partner.end_game_button.config(state=NORMAL)
+
+        # only enable stats button if we have played at least one round.
+        if self.rounds_played >= 1:
+            partner.stats_button.config(state=NORMAL)
+
         self.hint_box.destroy()
 
 
